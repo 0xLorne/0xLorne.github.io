@@ -2,7 +2,7 @@
 layout: post
 title: La importancia de .gitignore
 date: 2023-10-21
-categories: ["git","ciberseguridad","sensitive-data exposure"]
+categories: [git,ciberseguridad,"data exposure"]
 thumbnail: "assets/images/git.jpg"
 ---
 
