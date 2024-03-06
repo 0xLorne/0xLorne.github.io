@@ -28,6 +28,7 @@ Supongamos que queremos instalar la distribución linux Parrot (viva!) y googlea
 Ahora somos conscientes que el motor es eso, una herramienta incapaz de entender nuestros pensamientos y su contexto, por eso mismo necesitamos de métodos avanzados de búsqueda, los dorks.
 
 
+
 ## ¿Qué es un Dork?
 
 Un Dork, es un método avanzado de búsqueda basado en sintaxis, que facilita al navegador y filtra lo que nos sirve, de lo que no, en el contexto de la seguridad, principalmente nos ayuda a aprovechar de una mejor manera la capacidad de los algoritmos de búsqueda de estos motores, e incluso para encontrar información muy específica, que de otras maneras no habríamos sido capaces de encontrar.
@@ -66,7 +67,7 @@ Hay como 44 tipos diferentes, a continuación los más populares y más usados b
 
 Un ejemplo de dork para encontrar archivos sensibles:
 ```
-/api/geojson?url=file:/etc/passwd
+inurl:"/etc/passwd"
 ```
 
 Un dork que escandalizaría a cualquiera (literalmente encontré más documentos de empleados de dependencias de gobierno mexicanas.)

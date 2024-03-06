@@ -11,7 +11,7 @@
   /* Terminal-style colors */
   --terminal-background: #000; /* Fondo negro */
   --terminal-text: #32be89; /* Texto verde */
-  --border-radius: 2rem;
+  --border-radius: 0.6rem;
 }
 
 
@@ -64,6 +64,7 @@ header .site-title {
   align-items: center;
   gap: 3rem;
 }
+
 /* #bio-avatar-wrapper {} */
 #bio-avatar {
   width: 180px;
