@@ -146,7 +146,7 @@ teniendo, nuestro hash, nuestras posibles contraseñas y nuestra regla personali
 `john --format=bcrypt --rules=MiReglaPersonalizada --wordlist=frutas hash`
 
 
-![Crackeada](/assets/images/john/cracked.jpg)
+![Crackeada](/assets/images/john/cracked.png)
 
 en resumen obtuvimos una contraseña con características personalizadas y palabras que podían ser la contraseña en cuestión usando reglas custom de john.
 
