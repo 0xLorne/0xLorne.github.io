@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CC-1337 | Conociendo a: John The Ripper</title>
+  <link rel="icon" type="image/x-icon" href="/assets/images/glider.ico">
+  
+  <link rel="stylesheet" href="/assets/css/main.css" />
+  <link rel="stylesheet" href="/assets/css/post.css" />
+  <link rel="stylesheet" href="/assets/css/syntax.css" />
+  
+  <link rel="stylesheet" href="/assets/css/common.css" />
+  <script src="/assets/js/categories.js"></script>
+  
+  <script defer src="/assets/js/lbox.js"></script>
+  
+</head>
+
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+  
+  <body>
+    <main class="blogfeed">
+      
+<header>
+  <a class="site-title article-page" href="/">CC-1337</a>
+</header>
+
+
+
+      
+      <section id="article">
+        
+        <!--  -->
+        
+        <!--  -->
+        
+        <div
+          class="article-thumbnail"
+          style="
+            background-image: url('/assets/images/john/john.png');
+          "
+        >
+          <h1 class="article-title">Conociendo a: John The Ripper</h1>
+          <div class="article-bottom">
+            <div class="authors">
+              
+            </ul>
+            </div>
+            <small class="article-date">11 Mar 2024</small>
+            <div class="article-categories">
+              
+              <a href="#!" class="article-category">ciberseguridad</a>
+              
+              <a href="#!" class="article-category">password cracking</a>
+              
+              <a href="#!" class="article-category">hash</a>
+              
+            </div>
+          </div>
+        </div>
+        <div class="article-content"><h1 id="quién-es-john-the-ripper">¿Quién es John The Ripper?</h1>
+<p>John The Ripper o <code class="language-plaintext highlighter-rouge">john</code>, es una herramienta versátil y adaptable de cracking de hashes, en otras palabras, es una herramienta de ciberseguridad que podremos usar para descifrar contraseñas y otro tipo de contenido en un hash.</p>
+
+<h1 id="qué-es-un-hash">¿Qué es un hash?</h1>
+
+<p>Un hash o función hash es un algoritmo que transforma el contenido de una cadena de caracteres en una nueva con una longitud establecida, sin importar el tamaño de la entrada, sus aplicaciones van desde la <em>integridad de los datos</em> hasta la implementación en <em>protección de contraseñas</em>, en otras palabras, facilitan manipular información confidencial de manera segura, existen diferentes tipos de algoritmos, así como algoritmos establecidos como estándares para ciertos procesos, como <code class="language-plaintext highlighter-rouge">NTLM</code> para las contraseñas de <strong>Windows</strong> o <code class="language-plaintext highlighter-rouge">SHA512</code> para lo mismo en la mayoría de sistemas <strong>Linux</strong>. Si bien estos son muy importantes y populares, debemos entender que existen muchos tipos más que igualmente son aplicados en la vida cotidiana. Para investigar más sobre el tema, a continuación una <a href="https://hashcat.net/wiki/doku.php?id=example_hashes.">lista con la mayoría de tipos de hash</a> Se recomienda investigar más a detalle sobre el tema, ya que es muy amplio y va más allá del alcance de este artículo.</p>
+
+<p>Ejemplo de un hash con “Hola mundo!”</p>
+
+<ul>
+  <li>6FAF6B0C72D56EAAA5EBE6722F37720F</li>
+  <li>4c17251f721927663d722e6c02dee3882b0b92bee52da6aa7f02217cb3e5c1874a7d137960c0bb8eeb057d0987e44e78bcd49c15e8d904eb1485d37ec41b224c</li>
+</ul>
+
+<h4 id="qué-es-un-diccionario">¿Qué es un diccionario?</h4>
+
+<p>Un archivo con una lista de cadenas que mayormente contiene contraseñas potenciales, normalmente incluyen contraseñas populares, o en ataques dirigidos, palabras y términos específicos correspondientes a las características del objetivo.</p>
+
+<h4 id="qué-es-fuerza-bruta">¿Qué es Fuerza bruta?</h4>
+
+<p>La fuerza bruta es un método de ataque que consiste en probar todas las posibles combinaciones de caracteres para descifrar contraseñas o vulnerar sistemas, popularmente se le conoce como el método más efectivo, ya que, mientras se tengan recursos y paciencia, se llegará al objetivo.</p>
+
+<h1 id="instalando-y-configurando-john">Instalando y configurando John</h1>
+
+<p>Al ser una herramienta tan popular, está disponible para una gran cantidad de sistemas operativos y Distribuciones Linux, por lo que en este caso supondremos tener un sistema basado en <a href="https://www.debian.org/">Debian</a></p>
+
+<p>Instalación via apt:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo apt install john
+</code></pre></div></div>
+<p>Instalación via git:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/openwall/john -b bleeding-jumbo john
+cd john/src/
+./configure
+make -s clean &amp;&amp; make -sj4
+</code></pre></div></div>
+<p>El comando anterior especifica la rama <strong>bleeding-jumbo</strong>, que es más popular por sus características extra.
+finalmente para probar el binario, podemos usar <code class="language-plaintext highlighter-rouge">./john --test</code></p>
+
+<h1 id="identificando-el-tipo-de-hash">Identificando el tipo de hash</h1>
+
+<p>Para poder realizar un ataque sobre un hash, debemos saber de qué tipo es, esto se logra con herramientas como <code class="language-plaintext highlighter-rouge">hashid</code> que son realmente sencillas de utilizar, simplemente introducimos el hash en cuestión y nos debería devolver el tipo, justo así:</p>
+
+<p><img src="/assets/images/john/hashid.png" alt="hashid" /></p>
+
+<p>Es recomendable contar con varias herramientas de análisis de hash, para tener mayor certeza del tipo, ya que hay bastantes que son parecidos y crackear con un tipo de hash equivocado sólo resultará en una pérdida de tiempo.</p>
+
+<h1 id="primeros-pasos-con-john">Primeros pasos con John</h1>
+
+<p>Afortunadamente la sintaxis de esta herramienta es muy sencilla y nos permitirá entender muy rápido qué es lo que hacemos, primero que nada, debemos pasar como mínimo 1 argumento, que es el archivo con el hash en cuestión que trataremos de romper, algo así:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>john hash.txt
+</code></pre></div></div>
+
+<p>Si bien haciendo esto, podemos conseguir descifrar el hash, no es lo más recomendable, ya que hacemos que john descifre el tipo de hash (mediante técnicas basadas en la estructura y longitud del hash) y en la mayoría de los casos puede no hacerlo de manera eficiente, segundo, es una buena práctica especificar el diccionario que utilizaremos, en este caso, nuestro confiable amigo <code class="language-plaintext highlighter-rouge">rockyou.txt</code> para tener algo como lo siguiente:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>john --format=nt --wordlist=/usr/share/wordlists/rockyou.txt hash.txt
+</code></pre></div></div>
+<p>En el comando anterior especificamos el tipo de hash con la flag <code class="language-plaintext highlighter-rouge">--format</code> y la ubicación de nuestro diccionario, con <code class="language-plaintext highlighter-rouge">--wordlist</code></p>
+
+<p><strong>Nota</strong>: para conocer la sintaxis de cada tipo de hash en la flag –format, se recomienta usar el comando john –list=formats</p>
+
+<h1 id="single-crack">Single Crack</h1>
+
+<p>John nos permite realizar ciertos tipos más específicos de ataques, que nos permiten variar la sintaxis de nuestras posibles contraseñas, normalmente este modo se utiliza cuando podemos pensar que la complejidad de la contraseña es relativamente baja, es decir, no muy complicada, para ello se requiere que el hash tenga el formato <code class="language-plaintext highlighter-rouge">usuario:hash</code> y para este formato no necesitamos un diccionario, ya que este será generado por john</p>
+
+<p>Un ejemplo, supongamos que tenemos un usuario llamado <code class="language-plaintext highlighter-rouge">lorne</code> y obtuvimos un hash, digamos <code class="language-plaintext highlighter-rouge">e79a07a6929602a2b91665bce524dc30</code>, ¿Qué sigue?</p>
+
+<p>bien, debemos primero poner el hash y el usuario en el formato, de la siguiente manera:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">lorne:e79a07a6929602a2b91665bce524dc30</code></li>
+</ul>
+
+<p>Una vez creado el formato y puesto en un archivo, nos queda indicarle a john qué tipo de ataque hará:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>john --single --format=raw-md5 hash.txt
+</code></pre></div></div>
+
+<p><img src="/assets/images/john/single.png" alt="John Single mode" /></p>
+
+<p>Para este tipo de ataque se utilizan las siguientes transformaciónes de “manglado”:</p>
+
+<p>1.<strong>Mayúsculas y minúsculas</strong>: Convertir todas las letras a mayúsculas o minúsculas, o alternarlas.</p>
+
+<p>2.<strong>Reemplazo de caracteres</strong>: Cambiar ciertas letras por números o símbolos que se asemejen visualmente (por ejemplo, “a” por “@”, “o” por “0”, “l” por “1”, etc.).</p>
+
+<p>3.<strong>Añadir prefijos o sufijos</strong>: Agregar números, símbolos o palabras comunes antes o después de la palabra base.</p>
+
+<p>4.<strong>Permutaciones</strong>: Reordenar las letras de la palabra base.</p>
+
+<p>5.<strong>Eliminación o duplicación de caracteres</strong>: Eliminar o duplicar ciertos caracteres dentro de la palabra base.</p>
+
+<h1 id="reglas-personalizadas">Reglas personalizadas</h1>
+
+<p>Ya sabemos como crackear hashes por medio de diccionarios genéricos y manglado simple, pero esto aún no es suficiente en la mayoría de los casos para obtener contraseñas que siguen un patrón o ciertos requisitos. Actualmente es más común que los servicios y organizaciones pidan que las contraseñas tengan una complejidad.</p>
+
+<p>Las reglas de John funcionan de manera analógica a las <strong>regex</strong> o <strong>expresiones regulares</strong> por lo que un usuario que pueda crearlas y manipularlas, será capaz de realizar sus propios ataques con reglas personalizadas.</p>
+
+<h4 id="paso-1-ubicar-el-archivo-de-configuración">Paso 1: Ubicar el archivo de configuración.</h4>
+<p>Las reglas personalizadas se encuentran en el archivo de configuración de john, en linux, sería: <code class="language-plaintext highlighter-rouge">/etc/john/john.conf</code>, por lo que debemos ir ahí. Es una buena práctica implementarlas en la sección de reglas, que se encuentra entre la línea <strong>678</strong> y <strong>1173</strong> (si nuestro archivo es la versión jumbo default)</p>
+<h4 id="paso-2-definir-la-regla-personalizada">Paso 2: Definir la regla personalizada.</h4>
+<p>Para que el programa entienda que estamos definiendo una regla, justo como una variable en cualquier lenguaje de programación, necesitamos indicarlo con la sintaxis adecuada, siendo la siguiente:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[List.Rules:MiReglaPersonalizada]
+cAz"[.#\$!\-][1-9]"
+</code></pre></div></div>
+<p>donde <code class="language-plaintext highlighter-rouge">List.Rules</code> es el componente encargado de declarar que estamos usando una regla y <code class="language-plaintext highlighter-rouge">MiReglaPersonalizada</code> el nombre de la regla en cuestión.</p>
+
+<p>la explicación de la regla es la siguiente:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">c</code> $\rightarrow$ Capitaliza la palabra (le pone mayúscula a la primer letra)</li>
+  <li><code class="language-plaintext highlighter-rouge">Az</code> $\rightarrow$ Agrega a la final de la palabra lo que tenga a continuación</li>
+  <li><code class="language-plaintext highlighter-rouge">[.#\$!\-]</code> $\rightarrow$ añade alguno de los siguientes carácteres</li>
+  <li><code class="language-plaintext highlighter-rouge">[1-9]</code> $\rightarrow$ añade alguno de los siguientes dígitos</li>
+</ul>
+
+<h4 id="paso-3-probar-la-regla">Paso 3: Probar la regla.</h4>
+
+<p>En mi caso usando una palabra que supongamos se obtuvo de las posibles contraseñas, pero sigue las características anteriores.</p>
+
+<p><code class="language-plaintext highlighter-rouge">$2y$10$V/8KEx85Gw2eIIclKlT/beIonHOC4kDiBDBCJg58MIgkMKiJp4g.y</code> (Hash bcrypt) Tenemos este hash, y sabemos que la contraseña es una fruta, porque al objetivo en cuestión le encantan las frutas, así que creamos nuestro diccionario con frutas:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pera
+uva
+mango
+manzana
+fresa
+piña
+kiwi
+sandia
+platano
+</code></pre></div></div>
+
+<p>teniendo, nuestro hash, nuestras posibles contraseñas y nuestra regla personalizada, procedemos:</p>
+
+<p><code class="language-plaintext highlighter-rouge">john --format=bcrypt --rules=MiReglaPersonalizada --wordlist=frutas hash</code></p>
+
+<p><img src="/assets/images/john/cracked.png" alt="Crackeada" /></p>
+
+<p>en resumen obtuvimos una contraseña con características personalizadas y palabras que podían ser la contraseña en cuestión usando reglas custom de john.</p>
+
+<p>Recordando que john no se limita sólo a hashes, sino a archivos zip,rar,passphrase de llaves ssh, etcétera, los límites de uso ya no quedan en la implementación de la herramienta.</p>
+
+<h1 id="cómo-evitar-ser-atacado">¿Cómo evitar ser atacado?</h1>
+
+<ul>
+  <li>Evitar contraseñas predecibles</li>
+  <li>Usar frases largas como contraseña</li>
+  <li>Implementar verificación de 2 factores (2FA)</li>
+  <li>Cambiar las contraseñas si se tiene sospechas de haber sido hackeado o en proceso de</li>
+  <li>No reciclar contraseñas</li>
+  <li>Una alternativa viable también es utilizar gestores de contraseñas</li>
+</ul>
+
+<h1 id="conclusión">Conclusión</h1>
+
+<p>En conclusión, John The Ripper es una herramienta poderosa para descifrar hashes y desencriptar contraseñas. Proporciona varios métodos de ataque, incluyendo ataques de diccionario y ataques de fuerza bruta. Al entender los diferentes tipos de hashes y utilizar técnicas apropiadas, John The Ripper puede ser un activo valioso en el campo de la ciberseguridad. Sin embargo, es importante recordar que el uso de contraseñas fuertes y únicas, la implementación de métodos de autenticación avanzados y la actualización regular de contraseñas son prácticas esenciales para protegerse contra los ataques.</p>
+
+<p>Para finalizar, compartiré algunos sitios que pueden interesar al lector si desea aprender más sobre esta herramienta.</p>
+
+<h1 id="fuentes-de-interés">Fuentes de interés</h1>
+
+<ul>
+  <li>https://www.openwall.com/john/doc/RULES.shtml</li>
+  <li>https://tryhackme.com/room/johntheripper0</li>
+</ul>
+</div>
+      </section>
+      <footer>
+  <p>&copy; 2024 | CC-1337</p>
+</footer>
+
+    </main>
+    <section id="category-modal-bg"></section>
+<section id="category-modal">
+  <h1 id="category-modal-title"></h1>
+  <section id="category-modal-content"></section>
+</section>
+
+    <meta property="og:image" content="assets/images/john/john.png">
+  </body>
+  
+</html>

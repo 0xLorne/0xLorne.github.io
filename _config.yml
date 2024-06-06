@@ -1,0 +1,43 @@
+title: CC-1337
+markdown: kramdown
+kramdown:
+  input: GFM
+  # Habilitar soporte para negritas e itálicas
+  enable_coderay: false
+  smart_quotes: lsquo,rsquo,ldquo,rdquo
+
+# baseurl: "/"
+
+# for atom feed
+author: 
+  name: Lorne
+  email: Pentesting@ciencias.unam.mx
+
+plugins:
+  - jemoji
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-feed
+
+collections_dir: articles
+collections:
+  posts:
+    output: true
+  writeups:
+    output: true
+
+
+#    future: true
+defaults:
+  - scope:
+      path: "_posts"
+    values:
+      layout: "post"
+      permalink: /posts/:title/
+  - scope:
+      path: "_writeups"
+    values:
+      layout: "writeup"
+      permalink: /writeups/:title/
+exclude: ["sitemap.xml", "feed.xml", "LICENSE", "README.md","Biblioteca.md"]
+

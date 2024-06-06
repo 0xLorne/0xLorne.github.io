@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CC-1337 | Tryhack3M: Brick Heist</title>
+  <link rel="icon" type="image/x-icon" href="/assets/images/glider.ico">
+  
+  <link rel="stylesheet" href="/assets/css/main.css" />
+  <link rel="stylesheet" href="/assets/css/post.css" />
+  <link rel="stylesheet" href="/assets/css/syntax.css" />
+  
+  <link rel="stylesheet" href="/assets/css/common.css" />
+  <script src="/assets/js/categories.js"></script>
+  
+  <script defer src="/assets/js/lbox.js"></script>
+  
+</head>
+
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+  
+  <body>
+    <main class="blogfeed">
+      
+<header>
+  <a class="site-title article-page" href="/">CC-1337</a>
+</header>
+
+
+
+      
+      <section id="article">
+        
+        <!--  -->
+        
+        <!--  -->
+        
+        <div
+          class="article-thumbnail"
+          style="
+            background-image: url('/assets/images/bricks/thumb.jpg');
+          "
+        >
+          <h1 class="article-title">Tryhack3M: Brick Heist</h1>
+          <div class="article-bottom">
+            <div class="authors">
+              
+            </ul>
+            </div>
+            <small class="article-date">13 Apr 2024</small>
+            <div class="article-categories">
+              
+              <a href="#!" class="article-category">writeup</a>
+              
+              <a href="#!" class="article-category">blockchain</a>
+              
+              <a href="#!" class="article-category">Wordpress</a>
+              
+              <a href="#!" class="article-category">Miners</a>
+              
+              <a href="#!" class="article-category">Threat hunting</a>
+              
+            </div>
+          </div>
+        </div>
+        <div class="article-content"><p>This is a Writeup for the room <a href="https://tryhackme.com/r/room/tryhack3mbricksheist">Brick Heist</a>, for the platform <a href="https://tryhackme.com">Tryhackme</a>, I just resolved april 13th (before the deploy)</p>
+
+<p>During the reconnaissance phase, the Nmap scan revealed open ports, although nothing particularly relevant was found. 
+<img src="/assets/images/bricks/ports.png" alt="ports" />
+Then, a forced-browsing scan, uncover the Wordpress Structure running in the HTTPS service.
+<img src="/assets/images/bricks/bricks.png" alt="index" /></p>
+
+<p>Further enumeration focused on the Wordpress version and plugins, with the discovery of the plugin <em>Bricks</em>. A quick research revealed a vulnerability in the Bricks Builder WordPress plugin, documented under CVE-2024-25600. <a href="https://www.securityweek.com/websites-hacked-via-vulnerability-in-bricks-builder-wordpress-plugin/">I stumbled upon an intriguing webpage that not only detailed the flaw within the plugin but also provided information about the CVE itself.</a></p>
+
+<p><img src="/assets/images/bricks/cvedescription.png" alt="cvedescription" /></p>
+
+<p>Then I searched for more info about the CVE, and found a github PoC <a href="https://raw.githubusercontent.com/Chocapikk/CVE-2024-25600/main/exploit.py">exploit</a> that allows unauthenticated RCE (Remote Command Execution) so basically by running the exploit we can now get a shell, and that is what I did</p>
+
+<p><img src="/assets/images/bricks/exploitgh.png" alt="readme" />
+<img src="/assets/images/bricks/rce.png" alt="rce" /></p>
+
+<h4 id="what-is-the-content-of-hidden-txt-file">What is the content of hidden .txt file?</h4>
+
+<p>With access gained, I went to the web page and retreive the <code class="language-plaintext highlighter-rouge">hidden .txt file</code>, the content is in the common Tryhackme flag format <em>THM{.}</em></p>
+
+<h4 id="what-is-the-name-of-the-suspicious-process-">What is the name of the suspicious process ?</h4>
+
+<p>Moving beyond access escalation, the focus shifted to identifying suspicious processes. After careful observation, two processes were identified:</p>
+
+<p><img src="/assets/images/bricks/ps1.png" alt="processes" /></p>
+
+<h4 id="what-is-the-service-related-to-the-process">What is the service related to the process?</h4>
+
+<p>To determine the service associated with the identified processes, the following command was executed:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl status --all | grep -B 5 &lt;PID&gt;
+</code></pre></div></div>
+
+<p>and, if we’re seeing the output with attention, the service is:</p>
+
+<p><img src="/assets/images/bricks/ps2.png" alt="service" />
+The output revealed a service related to cryptocurrency mining.</p>
+
+<p>There is a hint on it, so its easier to find it (?)</p>
+
+<p><img src="/assets/images/bricks/service.png" alt="servicehint" /></p>
+
+<h4 id="what-is-the-config-file-for-the-miner">What is the config file for the miner?</h4>
+
+<p>Upon navigating to the process directory, I examined each file, and among them, one file stood out as particularly intriguing:</p>
+
+<p><img src="/assets/images/bricks/miner.png" alt="miner" /></p>
+
+<p>This file contained a wealth of crucial information. Based on its contents, it became evident that this file served as the configuration file for the mining operation. With ID and the Cryptocurrency that is using: Bitcoin</p>
+
+<h4 id="what-wallet-address-is-mining-to">What wallet address is mining to?</h4>
+
+<p>Within the configuration file, an ID was found, which was then processed using CyberChef to reveal a SegWit Bitcoin Wallet Address. 
+<img src="/assets/images/bricks/cyberchef.png" alt="cyberchef" /></p>
+
+<p>By splitting it in half the output and selecting one part, the wallet address was successfully extracted.</p>
+
+<h4 id="the-wallet-address-is-relatet-to-transactions-to-which-threat-groups">The wallet address is relatet to transactions to which threat groups?</h4>
+
+<p>A search for transactions associated with the wallet address led to the identification of threat groups linked to a non-SegWit Bitcoin address. 
+<img src="/assets/images/bricks/blockchain.png" alt="blockchain" />
+<img src="/assets/images/bricks/bchain2.png" alt="b2" />
+<br />
+<img src="/assets/images/bricks/wallet.png" alt="wallet" /></p>
+
+<p>Further research revealed the specific threat group mentioned in the question.</p>
+
+<p><img src="/assets/images/bricks/group.png" alt="group" /></p>
+</div>
+      </section>
+      <footer>
+  <p>&copy; 2024 | CC-1337</p>
+</footer>
+
+    </main>
+    <section id="category-modal-bg"></section>
+<section id="category-modal">
+  <h1 id="category-modal-title"></h1>
+  <section id="category-modal-content"></section>
+</section>
+
+    <meta property="og:image" content="assets/images/bricks/thumb.jpg">
+  </body>
+  
+</html>
