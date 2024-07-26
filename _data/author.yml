@@ -2,9 +2,12 @@ name: Lorne
 dp: https://avatars.githubusercontent.com/u/142062124?s=400&u=8a8c272dcf6d5eb300341c2853cccb7497a54045&v=4
 description: Ethical Red Teamer - Estudiante de Ciencias de la Computación, UNAM
 contact:
+  - title: hackthebox
+    url: https://app.hackthebox.com/profile/794018
   - title: github
     url: https://github.com/0xLorne
   - title: tryhackme
     url: https://tryhackme.com/p/Lorne
   - title: telegram
     url: https://t.me/+gAP2hSNQsLkyYWUx
+
